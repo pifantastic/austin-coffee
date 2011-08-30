@@ -1,0 +1,34 @@
+/* SVG */
+line.graph {
+  stroke: #000;
+  fill: #FFF;
+  stroke-width: 1px;
+}
+
+polygon.graph {
+  stroke: #000;
+  stroke-width: 1px;
+  fill: transparent;
+}
+
+circle.dot {
+  opacity: 0.7;
+  fill: #000;
+}
+
+text.label {
+  text-shadow: #FFF 0 0 10px;
+}
+
+/* Page */
+body {
+  font-family: arial, sans-serif;
+}
+
+header {
+  font-family: 'Droid Sans', sans-serif;
+}
+
+label {
+  display: block;
+}
