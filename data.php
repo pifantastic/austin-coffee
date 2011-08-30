@@ -12,42 +12,49 @@ $data = json_decode($output);
 
 $shops = array(
   "strangebrew" => array(
+    "link" => "http://strangebrewaustin.com/",
     "name" => "Strange Brew",
     "color" => "red",
     "stroke" => "black",
     "data" => array()
   ),
   "bennu" => array(
+    "link" => "http://www.bennucoffee.com/",
     "name" => "Bennu",
     "color" => "blue",
     "stroke" => "black",
     "data" => array()
   ),
   "epoch" => array(
+    "link" => "http://www.epochcoffee.com/",
     "name" => "Epoch",
     "color" => "green",
     "stroke" => "black",
     "data" => array()
   ),
   "flightpath" => array(
+    "link" => "http://www.flightpathcoffeehouse.com/",
     "name" => "Flightpath",
     "color" => "brown",
     "stroke" => "black",
     "data" => array()
   ),
   "spiderhouse" => array(
+    "link" => "http://www.spiderhousecafe.com/index.php",
     "name" => "Spider House",
     "color" => "yellow",
     "stroke" => "black",
     "data" => array()
   ),
   "mozarts" => array(
+    "link" => "http://www.mozartscoffee.com/",
     "name" => "Mozart's",
     "color" => "orange",
     "stroke" => "black",
     "data" => array()
   ),
   "cherrywoodcoffeehouse" => array(
+    "link" => "http://www.cherrywoodcoffeehouse.com/",
     "name" => "Cherrywood Coffeehouse",
     "color" => "black",
     "stroke" => "black",

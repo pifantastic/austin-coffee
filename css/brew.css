@@ -25,6 +25,10 @@ label {
   display: block;
 }
 
+label a {
+  font-size: 12px;
+}
+
 span.swatch {
   padding: 0 10px;
   opacity: 0.5;

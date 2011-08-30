@@ -34,10 +34,15 @@
           var swatch = $('<span class="swatch" />')
             .css({ backgroundColor: shop.color })
 
+          var link = $('<a />')
+            .attr('href', shop.link)
+            .text(shop.link)
+
           $('<label />')
-            .text(shop.name)
+            .text(shop.name + ' | ')
             .prepend(checkbox)
             .prepend(swatch)
+            .append(link)
             .appendTo(controls)
         });
       }
