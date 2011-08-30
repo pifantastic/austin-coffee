@@ -27,6 +27,7 @@ label {
 
 span.swatch {
   padding: 0 10px;
+  opacity: 0.5;
 }
 
 /* page */
