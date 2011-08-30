@@ -12,17 +12,23 @@
     </header>
     <section id="controls"></section>
     <section id="radar"></section>
+    <footer>
+      <h3>Am I missing one?  Want to leave your own feedback?</h3>
+      <a href="https://docs.google.com/spreadsheet/viewform?formkey=dE9wdU9nT0xLTE8wVm15RFVGRTUxZXc6MQ">Click here!</a>
+    </footer>
     <script src="js/jquery.js"></script>
     <script src="js/d3.js"></script>
     <script src="js/d3.geom.js"></script>
     <script>
+      var url = "https://spreadsheets.google.com/feeds/list/tOpuOgOLKLO0VmyDUFE51ew/od6/public/values?alt=json-in-script&callback=listEntries"
+
       function buildControls(data) {
         var controls = $('#controls');
 
-        $.each(data, function(i, shop) {
+        $.each(data, function(id, shop) {
           var checkbox = $('<input type="checkbox" checked="checked"/>')
             .change(function() {
-              $('#' + shop.id).toggle($(this).is(':checked'));
+              $('#' + id).toggle($(this).is(':checked'));
             })
 
           var swatch = $('<span class="swatch" />')
@@ -41,7 +47,7 @@
         var height = 400
         var scale = 5
         var points = 5
-        var labels = ['Taste', 'Price', 'WiFi', 'Hours', 'Comfort']
+        var labels = ['taste', 'price', 'wifi', 'hours', 'ambiance']
 
         var svg = d3.select("#radar")
           .append("svg:svg")
@@ -53,13 +59,13 @@
         var radius = Math.floor((width > height ? height : width) / 2)
 
         // Render data.
-        for (var i = 0, len = data.length; i < len; i++) {
+        $.each(data, function(id, data) {
           var coords = []
-            , shop = svg.append('svg:g').attr("id", data[i].id);
+            , shop = svg.append('svg:g').attr("id", id);
 
-          for (var j = 0; j < points; j++) {
-            var r = Math.round(radius / scale) * data[i].data[j]
-              , a = (Math.round(360 / points) * j) * (Math.PI / 180)
+          $.each(labels, function(i, attr) {
+            var r = Math.round(radius / scale) * data.data[attr]
+              , a = (Math.round(360 / labels.length) * i) * (Math.PI / 180)
               , x = Math.round(originX + r * Math.cos(a))
               , y = Math.round(originY + r * Math.sin(a))
             coords.push([x, y].join(','))
@@ -69,22 +75,23 @@
               .attr("cx", x)
               .attr("cy", y)
               .attr("r", 3)
-          }
+          })
+
           shop.append('svg:polygon')
             .attr("class", "shop")
             .data(coords)
             .attr('opacity', 0.5)
-            .attr("fill", data[i].color)
+            .attr("fill", data.color)
             .attr("points", coords.join(' '))
-            .attr("stroke", data[i].stroke)
-        }
+            .attr("stroke", data.stroke)
+        })
 
         // Render graph.
         var coords = []
           , graph = svg.append('svg:g').attr('id', 'graph')
 
-        for (var j = 0; j < points; j++) {
-          var a = (Math.round(360 / points) * j) * (Math.PI / 180)
+        $.each(labels, function(i, label) {
+          var a = (Math.round(360 / labels.length) * i) * (Math.PI / 180)
             , x = Math.round(originX + radius * Math.cos(a))
             , y = Math.round(originY + radius * Math.sin(a))
 
@@ -109,13 +116,13 @@
               .attr("class", "label")
               .attr("x", x)
               .attr("y", y)
-              .text(labels[j])
+              .text(label)
 
           if (x > width / 2)
             label.attr("dx", 10).attr("dy", 5)
           else
             label.attr("dx", -50).attr("dy", 5)
-        }
+        });
 
         graph.append('svg:polygon')
           .data(coords)
@@ -124,9 +131,14 @@
       }
 
       $(function() {
-        $.getJSON("js/data.json", function(data) {
-          buildControls(data);
-          buildGraph(data);
+        $.getJSON("data.php", function(data) {
+          if (data && data.success) {
+            buildControls(data.shops);
+            buildGraph(data.shops);
+          }
+          else {
+            alert('Aww snap.  Error fetching data.');
+          }
         });
       })
     </script>
