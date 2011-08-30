@@ -1,0 +1,23 @@
+[
+  {
+    "id": "strange-brew",
+    "name": "Strange Brew",
+    "color": "red",
+    "stroke": "black",
+    "data": [5, 3, 5, 5, 3]
+  },
+  {
+    "id": "bennu",
+    "name": "Bennu",
+    "color": "blue",
+    "stroke": "black",
+    "data": [4, 5, 2, 5, 4]
+  },
+  {
+    "id": "epoch",
+    "name": "Epoch",
+    "color": "green",
+    "stroke": "black",
+    "data": [4, 3, 2, 5, 2]
+  }
+]

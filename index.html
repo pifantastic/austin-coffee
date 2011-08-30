@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Austin Coffee Shops</title>
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/brew.css">
@@ -15,128 +16,129 @@
     <script src="js/d3.js"></script>
     <script src="js/d3.geom.js"></script>
     <script>
-      var data = [
-        {
-          id: "strange-brew",
-          name: "Strange Brew",
-          color: "red",
-          stroke: "black",
-          data: [3, 5, 5, 5, 4]
-        },
-        {
-          id: "bennu",
-          name: "Bennu",
-          color: "blue",
-          stroke: "black",
-          data: [4, 5, 4, 3, 4]
-        },
-        {
-          id: "epoch",
-          name: "Epoch",
-          color: "green",
-          stroke: "black",
-          data: [4, 3, 4, 3, 1]
+      function buildControls(data) {
+        var controls = $('#controls');
+
+        $.each(data, function(i, shop) {
+          var checkbox = $('<input type="checkbox" checked="checked"/>')
+            .change(function() {
+              $('#' + shop.id).toggle($(this).is(':checked'));
+            })
+
+          var swatch = $('<span class="swatch" />')
+            .css({ backgroundColor: shop.color })
+
+          $('<label />')
+            .text(shop.name)
+            .prepend(checkbox)
+            .prepend(swatch)
+            .appendTo(controls)
+        });
+      }
+
+      function buildGraph(data) {
+        var width = 600
+        var height = 400
+        var scale = 5
+        var points = 5
+        var labels = ['Taste', 'Price', 'WiFi', 'Hours', 'Comfort']
+
+        var svg = d3.select("#radar")
+          .append("svg:svg")
+            .attr("width", width)
+            .attr("height", height)
+
+        var originX = Math.floor(width / 2)
+        var originY = Math.floor(height / 2)
+        var radius = Math.floor((width > height ? height : width) / 2)
+
+        // Render data.
+        for (var i = 0, len = data.length; i < len; i++) {
+          var coords = []
+            , shop = svg.append('svg:g').attr("id", data[i].id);
+
+          for (var j = 0; j < points; j++) {
+            var r = Math.round(radius / scale) * data[i].data[j]
+              , a = (Math.round(360 / points) * j) * (Math.PI / 180)
+              , x = Math.round(originX + r * Math.cos(a))
+              , y = Math.round(originY + r * Math.sin(a))
+            coords.push([x, y].join(','))
+
+            shop.append('svg:circle')
+              .attr("class", "dot")
+              .attr("cx", x)
+              .attr("cy", y)
+              .attr("r", 3)
+          }
+          shop.append('svg:polygon')
+            .attr("class", "shop")
+            .data(coords)
+            .attr('opacity', 0.5)
+            .attr("fill", data[i].color)
+            .attr("points", coords.join(' '))
+            .attr("stroke", data[i].stroke)
         }
-      ]
 
-      var controls = $('#controls');
-      $.each(data, function(i, shop) {
-        var checkbox = $('<input type="checkbox" checked="checked"/>')
-          .change(function() {
-            $('#' + shop.id).toggle($(this).is(':checked'));
-          })
-
-        $('<label />')
-          .text(shop.name)
-          .prepend(checkbox)
-          .appendTo(controls)
-      });
-
-      var width = 600
-      var height = 400
-      var scale = 5
-      var points = 5
-      var labels = ['Taste', 'Price', 'WiFi', 'Hours', 'Comfort']
-
-      var svg = d3.select("#radar")
-        .append("svg:svg")
-          .attr("width", width)
-          .attr("height", height)
-
-      var originX = Math.floor(width / 2)
-      var originY = Math.floor(height / 2)
-      var radius = Math.floor((width > height ? height : width) / 2)
-
-      // Render data.
-      for (var i = 0, len = data.length; i < len; i++) {
-        var vertices = []
-          , shop = svg.append('svg:g').attr("id", data[i].id);
+        // Render graph.
+        var coords = []
+          , graph = svg.append('svg:g').attr('id', 'graph')
 
         for (var j = 0; j < points; j++) {
-          var r = Math.round(radius / scale) * data[i].data[j]
-            , a = (Math.round(360 / points) * j) * (Math.PI / 180)
-            , x = Math.round(originX + r * Math.cos(a))
-            , y = Math.round(originY + r * Math.sin(a))
-          vertices.push([x, y].join(','))
+          var a = (Math.round(360 / points) * j) * (Math.PI / 180)
+            , x = Math.round(originX + radius * Math.cos(a))
+            , y = Math.round(originY + radius * Math.sin(a))
 
-          shop.append('svg:circle')
-            .attr("class", "dot")
-            .attr("cx", x)
-            .attr("cy", y)
-            .attr("r", 3)
+          coords.push([x, y].join(','))
+
+          graph.append('svg:line')
+            .attr("class", "graph")
+            .attr("x1", originX)
+            .attr("y1", originY)
+            .attr("x2", x)
+            .attr("y2", y)
+
+          for (var n = 0, k = 0; n <= radius; n += (radius / scale), k++) {
+            graph.append('svg:circle')
+              .attr("class", "dot")
+              .attr("cx", Math.round(originX + n * Math.cos(a)))
+              .attr("cy", Math.round(originY + n * Math.sin(a)))
+              .attr("r", 2)
+          }
+
+          var label = graph.append('svg:text')
+              .attr("class", "label")
+              .attr("x", x)
+              .attr("y", y)
+              .text(labels[j])
+
+          if (x > width / 2)
+            label.attr("dx", 10).attr("dy", 5)
+          else
+            label.attr("dx", -50).attr("dy", 5)
         }
-        shop.append('svg:polygon')
-          .attr("class", "shop")
-          .data(vertices)
-          .attr('opacity', 0.5)
-          .attr("fill", data[i].color)
-          .attr("points", vertices.join(' '))
-          .attr("stroke", data[i].stroke)
-      }
 
-      // Render graph.
-      var vertices = []
-        , graph = svg.append('svg:g').attr('id', 'graph')
-
-      for (var j = 0; j < points; j++) {
-        var a = (Math.round(360 / points) * j) * (Math.PI / 180)
-          , x = Math.round(originX + radius * Math.cos(a))
-          , y = Math.round(originY + radius * Math.sin(a))
-
-        vertices.push([x, y].join(','))
-
-        graph.append('svg:line')
+        graph.append('svg:polygon')
+          .data(coords)
           .attr("class", "graph")
-          .attr("x1", originX)
-          .attr("y1", originY)
-          .attr("x2", x)
-          .attr("y2", y)
-
-        for (var n = 0, k = 0; n <= radius; n += (radius / scale), k++) {
-          graph.append('svg:circle')
-            .attr("class", "dot")
-            .attr("cx", Math.round(originX + n * Math.cos(a)))
-            .attr("cy", Math.round(originY + n * Math.sin(a)))
-            .attr("r", 2)
-        }
-
-        var label = graph.append('svg:text')
-            .attr("class", "label")
-            .attr("x", x)
-            .attr("y", y)
-            .text(labels[j])
-
-        if (x > width / 2)
-          label.attr("dx", 10).attr("dy", 5)
-        else
-          label.attr("dx", -50).attr("dy", 5)
+          .attr("points", coords.join(' '))
       }
 
-      graph.append('svg:polygon')
-        .data(vertices)
-        .attr("class", "graph")
-        .attr("points", vertices.join(' '))
-
+      $(function() {
+        $.getJSON("js/data.json", function(data) {
+          buildControls(data);
+          buildGraph(data);
+        });
+      })
     </script>
+
+    <!--[if IE]>
+      <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+      <script>
+         CFInstall.check({
+           mode: "overlay",
+           destination: "http://grimhappy.com/coffee"
+         });
+      </script>
+    <![endif]-->
   </body>
 </html>

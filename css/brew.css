@@ -1,4 +1,4 @@
-/* SVG */
+/* graph */
 line.graph {
   stroke: #000;
   fill: #FFF;
@@ -20,15 +20,20 @@ text.label {
   text-shadow: #FFF 0 0 10px;
 }
 
-/* Page */
+/* controls */
+label {
+  display: block;
+}
+
+span.swatch {
+  padding: 0 10px;
+}
+
+/* page */
 body {
   font-family: arial, sans-serif;
 }
 
 header {
   font-family: 'Droid Sans', sans-serif;
-}
-
-label {
-  display: block;
 }
