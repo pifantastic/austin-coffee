@@ -28,6 +28,24 @@ $shops = array(
     "color" => "green",
     "stroke" => "black",
     "data" => array()
+  ),
+  "flightpath" => array(
+    "name" => "Flightpath",
+    "color" => "blue",
+    "stroke" => "black",
+    "data" => array()
+  ),
+  "spiderhouse" => array(
+    "name" => "Spider House",
+    "color" => "yellow",
+    "stroke" => "black",
+    "data" => array()
+  ),
+  "mozarts" => array(
+    "name" => "Mozart's",
+    "color" => "orange",
+    "stroke" => "black",
+    "data" => array()
   )
 );
 
@@ -56,7 +74,10 @@ foreach ($data->feed->entry as $n => $row) {
 
 foreach ($shops as $id => $shop) {
   foreach ($attributes as $attr) {
-    $shops[$id]['data'][$attr] = array_sum($shops[$id]['data'][$attr]) / count($shops[$id]['data'][$attr]);
+    if (count($shops[$id]['data'][$attr]))
+      $shops[$id]['data'][$attr] = array_sum($shops[$id]['data'][$attr]) / count($shops[$id]['data'][$attr]);
+    else
+      $shops[$id]['data'][$attr] = 0;
   }
 }
 
