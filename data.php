@@ -46,7 +46,13 @@ $shops = array(
     "color" => "orange",
     "stroke" => "black",
     "data" => array()
-  )
+  ),
+  "cherrywoodcoffeehouse" => array(
+    "name" => "Cherrywood Coffeehouse",
+    "color" => "black",
+    "stroke" => "black",
+    "data" => array()
+  ),
 );
 
 $attributes = array(
