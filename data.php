@@ -31,7 +31,7 @@ $shops = array(
   ),
   "flightpath" => array(
     "name" => "Flightpath",
-    "color" => "blue",
+    "color" => "brown",
     "stroke" => "black",
     "data" => array()
   ),
