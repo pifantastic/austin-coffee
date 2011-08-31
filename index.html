@@ -11,16 +11,103 @@
       <h1>Austin Coffee Shops</h1>
     </header>
     <section id="controls"></section>
+    <section id="shops"></section>
     <section id="radar"></section>
-    <footer>
+    <section id="feedback">
       <h3>Am I missing one?  Want to leave your own feedback?</h3>
       <a href="https://docs.google.com/spreadsheet/viewform?formkey=dE9wdU9nT0xLTE8wVm15RFVGRTUxZXc6MQ">Click here!</a>
-    </footer>
+    </section>
     <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
     <script src="js/d3.js"></script>
     <script src="js/d3.geom.js"></script>
+    <script src="js/radar.js"></script>
     <script>
-      var url = "https://spreadsheets.google.com/feeds/list/tOpuOgOLKLO0VmyDUFE51ew/od6/public/values?alt=json-in-script&callback=listEntries"
+      $.getJSON('data.php', function(data) {
+        if (data.success) {
+          var graph = new Radar({
+            selector: '#radar',
+            width: 600,
+            height: 400,
+            scale: 5,
+            labels: ['taste', 'price', 'wifi', 'hours', 'ambiance']
+          });
+
+          $.each(data.shops, function(id, shop) {
+            graph.addPolygon(id, shop)
+
+            var div = $('<div class="shop">').attr("data-target", id)
+              , h3 = $('<h3>').text(shop.name)
+              , link = $('<a>').attr('href', shop.link).text(shop.link)
+
+            div.append(h3).append(link).appendTo('#shops')
+          });
+
+          graph.showPolygon($('div.shop:first').addClass('ui-selected').data('target'))
+
+          $('#shops').selectable({
+            filter: 'div.shop',
+            stop: function(e, ui) {
+              console.log(e, ui)
+            },
+            selected: function(e, ui) {
+              graph.showPolygon($(ui.selected).data('target'))
+            },
+            unselected: function(e, ui) {
+              graph.hidePolygon($(ui.unselected).data('target'))
+            }
+          });
+
+          $(window).keydown(function(e) {
+            switch (e.which) {
+              case 40: // down
+              case 39: // right
+                var current = $('div.shop.ui-selected')
+                  , next;
+
+                if (!current.length) {
+                  graph.showPolygon($('div.shop:first').addClass('ui-selected').data('target'))
+                  return
+                }
+
+                if (current.length > 1)
+                  current = current.last()
+
+                next = current.next()
+                if (!next.length)
+                  next = $('div.shop:first')
+
+                graph.tween(current.data('target'), next.data('target'))
+                current.removeClass('ui-selected')
+                next.addClass('ui-selected')
+                break;
+
+              case 38: // up
+              case 37: // left
+                var current = $('div.shop.ui-selected')
+                  , prev;
+
+                if (!current.length) {
+                  graph.showPolygon($('div.shop:last').addClass('ui-selected').data('target'))
+                  return
+                }
+
+                if (current.length > 1)
+                  current = current.first()
+
+                prev = current.prev()
+                if (!prev.length)
+                  prev = $('div.shop:last')
+
+                graph.tween(current.data('target'), prev.data('target'))
+                current.removeClass('ui-selected')
+                prev.addClass('ui-selected')
+                break;
+                break;
+            }
+          })
+        }
+      })
 
       function buildControls(data) {
         var controls = $('#controls');
@@ -87,8 +174,10 @@
             .data(coords)
             .attr('opacity', 0.5)
             .attr("fill", data.color)
-            .attr("points", coords.join(' '))
             .attr("stroke", data.stroke)
+            .attr("points", (new Array(coords.length + 1)).join(originX + ',' + originY + ' '))
+            .transition(750)
+              .attr("points", coords.join(' '))
         })
 
         // Render graph.
@@ -135,6 +224,7 @@
           .attr("points", coords.join(' '))
       }
 
+      /*
       $(function() {
         $.getJSON("data.php", function(data) {
           if (data && data.success) {
@@ -146,6 +236,7 @@
           }
         });
       })
+      */
     </script>
 
     <!--[if IE]>

@@ -1,3 +1,8 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 /* graph */
 line.graph {
   stroke: #000;
@@ -41,4 +46,53 @@ body {
 
 header {
   font-family: 'Droid Sans', sans-serif;
+  background-color: #333;
+  color: #FFF;
+  padding: 15px;
+}
+
+header h1 {
+  margin: 0;
+}
+
+section {
+  width: 300px;
+  float: left;
+}
+
+section#shops {
+  background-color: #F4F4F4;
+  overflow: scroll;
+}
+
+section#shops div.shop {
+  border-bottom: 1px solid #CCC;
+  padding: 5px;
+}
+
+section#shops div.shop.ui-selected {
+  background-color: orange;
+}
+
+section#shops div:hover {
+  background-color: #EEE;
+  cursor: pointer;
+}
+
+section#shops div.shop h3 {
+  margin: 5px 0 3px 0;
+  font-size: 16px;
+}
+
+section#shops div a {
+  font-size: 11px;
+  color: ;
+}
+
+section#radar {
+  width: 600px;
+}
+
+footer {
+  clear: both;
 }
