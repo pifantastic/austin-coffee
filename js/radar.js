@@ -20,15 +20,15 @@ Radar.prototype = {
     this.selector = opts.selector
 
     // Optional
-    this.width = opts.width || defaults.width
-    this.height = opts.height || defaults.height
-    this.scale = opts.scale || defaults.scale
+    this.width = opts.width || this.defaults.width
+    this.height = opts.height || this.defaults.height
+    this.scale = opts.scale || this.defaults.scale
     this.labels = opts.labels || []
     this.polygons = {}
 
-    this.originX = Math.floor(this.width / 2)
-    this.originY = Math.floor(this.height / 2)
-    this.radius = Math.floor((this.width > this.height ? this.height : this.width) / 2)
+    this.originX = Math.round(this.width / 2)
+    this.originY = Math.round(this.height / 2)
+    this.radius = Math.round((this.width > this.height ? this.height : this.width) / 2)
 
     this.svg = d3.select(this.selector)
       .append("svg:svg")
@@ -119,9 +119,19 @@ Radar.prototype = {
     $('#' + id).show()
   },
 
+  showAll: function() {
+    for (var id in this.polygons)
+      this.showPolygon(id)
+  },
+
   hidePolygon: function(id, delay) {
     delay = delay || 0
     $('#' + id).hide()
+  },
+
+  hideAll: function() {
+    for (var id in this.polygons)
+      this.hidePolygon(id)
   },
 
   tween: function(fromID, toID) {
